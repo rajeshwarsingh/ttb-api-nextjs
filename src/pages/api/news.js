@@ -1,11 +1,13 @@
+import config from '../../../config';
+
 export default async function handler(req, res) {
 
   let newsPromises = [
-    fetch('https://newsapi.org/v2/top-headlines?country=in&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5'),
-    fetch('https://newsapi.org/v2/top-headlines?category=health&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5'),
-    fetch('https://newsapi.org/v2/top-headlines?category=entertainment&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5'),
-    fetch('https://newsapi.org/v2/top-headlines?category=technology&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5'),
-    fetch('https://newsapi.org/v2/top-headlines?category=business&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5')
+    fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${config.newsAPIKey}&pageSize=5`),
+    fetch(`https://newsapi.org/v2/top-headlines?category=health&apiKey=${config.newsAPIKey}&pageSize=5`),
+    fetch(`https://newsapi.org/v2/top-headlines?category=entertainment&apiKey=${config.newsAPIKey}&pageSize=5`),
+    fetch(`https://newsapi.org/v2/top-headlines?category=technology&apiKey=${config.newsAPIKey}&pageSize=5`),
+    fetch(`https://newsapi.org/v2/top-headlines?category=business&apiKey=${config.newsAPIKey}&pageSize=5`)
   ];
 
   let promiseData = await Promise.all(newsPromises);
