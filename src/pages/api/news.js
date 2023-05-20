@@ -28,6 +28,7 @@ function formatData(data) {
       description: news.title,
       image: news.urlToImage,
       logo: news.urlToImage,
+      sourceLink:news.url,
       video: false,
     }
   });
