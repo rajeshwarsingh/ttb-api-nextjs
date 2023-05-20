@@ -1,20 +1,22 @@
 export default async function handler(req, res) {
-  const apiRes = await fetch('https://newsapi.org/v2/top-headlines?country=in&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5', {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
 
-  const apiResJson = await apiRes.json();
+  let newsPromises = [
+    fetch('https://newsapi.org/v2/top-headlines?country=in&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5'),
+    fetch('https://newsapi.org/v2/top-headlines?category=health&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5'),
+    fetch('https://newsapi.org/v2/top-headlines?category=entertainment&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5'),
+    fetch('https://newsapi.org/v2/top-headlines?category=technology&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5'),
+    fetch('https://newsapi.org/v2/top-headlines?category=business&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=5')
+  ];
 
-  const data = (apiResJson?.articles || []).map((news, i) => {
-    return {
-      key: i + 1,
-      description: news.title,
-      image: news.urlToImage,
-      logo: news.urlToImage,
-      video: false,
-    }
-  });
-  res.status(200).json({ data })
+  let promiseData = await Promise.all(newsPromises);
+
+  const data = {
+    breaking: (await promiseData[0].json())['articles'],
+    health: (await promiseData[1].json())['articles'],
+    entertainment: (await promiseData[2].json())['articles'],
+    technology: (await promiseData[3].json())['articles'],
+    business: (await promiseData[4].json())['articles'],
+  }
+
+  res.status(200).json({ data });
 }
