@@ -11,12 +11,26 @@ export default async function handler(req, res) {
   let promiseData = await Promise.all(newsPromises);
 
   const data = {
-    breaking: (await promiseData[0].json())['articles'],
-    health: (await promiseData[1].json())['articles'],
-    entertainment: (await promiseData[2].json())['articles'],
-    technology: (await promiseData[3].json())['articles'],
-    business: (await promiseData[4].json())['articles'],
+    breaking: formatData(await promiseData[0].json()),
+    health: formatData(await promiseData[1].json()),
+    entertainment: formatData(await promiseData[2].json()),
+    technology: formatData(await promiseData[3].json()),
+    business: formatData(await promiseData[4].json()),
   }
 
   res.status(200).json({ data });
+}
+
+function formatData(data) {
+  const resData = (data?.articles || []).map((news, i) => {
+    return {
+      key: i + 1,
+      description: news.title,
+      image: news.urlToImage,
+      logo: news.urlToImage,
+      video: false,
+    }
+  });
+
+  return resData;
 }
