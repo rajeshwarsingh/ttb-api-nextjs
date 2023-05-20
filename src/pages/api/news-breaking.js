@@ -15,6 +15,7 @@ export default async function handler(req, res) {
       description: news.title,
       image: news.urlToImage,
       logo: news.urlToImage,
+      sourceLink:news.url,
       video: false,
       time: (news?.publishedAt?(new Date(news?.publishedAt)).toLocaleDateString():'')
     }
