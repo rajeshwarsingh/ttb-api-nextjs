@@ -1,5 +1,7 @@
+import config from '../../../config';
+
 export default async function handler(req, res) {
-  const apiRes = await fetch('https://newsapi.org/v2/top-headlines?country=in&apiKey=6c08c057e51646d4b3c14313b53b05ce&pageSize=30', {
+  const apiRes = await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${config.newsAPIKey}&pageSize=30`, {
     headers: {
       'Content-Type': 'application/json',
     },
