@@ -76,11 +76,16 @@ function formatData(data) {
   const resData = (data?.articles || []).map((news, i) => {
     return {
       key: i + 1,
-      description: news.title,
-      image: news.urlToImage,
-      logo: news.urlToImage,
-      sourceLink: news.url,
+      author: news.author,
+      title: news.title,
+      description: news.description,
+      content: news.content,
+      url: news.url,
+      urlToImage: news.urlToImage,
       video: false,
+      time: (news?.publishedAt?(new Date(news?.publishedAt)).toLocaleDateString():''),
+      sourceLink:news.url,
+      logo: news.urlToImage
     }
   });
 
