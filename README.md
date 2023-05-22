@@ -6,6 +6,7 @@ First, run the development server:
 
 ```bash
 npm run dev
+# if not work use npx expo start --tunnel
 # or
 yarn dev
 # or
