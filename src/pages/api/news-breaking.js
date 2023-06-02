@@ -48,7 +48,7 @@ export default async function handler(req, res) {
 }
 
 
-async function getHomepageNews() {
+async function getHomepageNewsHindi() {
   const apiRes = await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${config.newsAPIKey}&pageSize=30`, {
     headers: {
       'Content-Type': 'application/json',
@@ -70,6 +70,34 @@ async function getHomepageNews() {
       time: (news?.publishedAt?(new Date(news?.publishedAt)).toLocaleDateString():''),
       sourceLink:news.url,
       logo: news.urlToImage
+    }
+  });
+
+  return data
+}
+
+async function getHomepageNews() {
+  const apiRes = await fetch(`https://gnews.io/api/v4/search?q=example&apikey=20f8b9a1bfbb46ef961e11cec6367fd7&lang=hi`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const apiResJson = await apiRes.json();
+
+  const data = (apiResJson?.articles || []).map((news, i) => {
+    return {
+      key: i + 1,
+      author: news.author,
+      title: news?.title,
+      description: news.description,
+      content: news.content,
+      url: news.url,
+      urlToImage: news.image,
+      video: false,
+      time: (news?.publishedAt?(new Date(news?.publishedAt)).toLocaleDateString():''),
+      sourceLink:news?.source?.url,
+      logo: news.image
     }
   });
 
