@@ -1,6 +1,19 @@
 import mongoose from 'mongoose';
+const { parse } = require('rss-to-json');
 import { connectDB } from '../../db';
 import config from '../../../config';
+
+const cacheKeys = {
+  en: 'news-en',
+  hi: 'news-hi',
+  mr: 'news-mr',
+};
+
+const homepageNews = {
+  en: getHomepageNewsEn(),
+  hi: getHomepageNewsHi(),
+  mr: getHomepageNewsMr(),
+}
 
 // Define the schema for the cached response
 const cacheSchema = new mongoose.Schema({
@@ -17,7 +30,9 @@ connectDB();
 
 // Handler for the /api/news route
 export default async function handler(req, res) {
-  const cacheKey = 'news'; // Key to identify the cached response
+
+  const { lang = 'hi' } = req.query;
+  const cacheKey = cacheKeys[lang] ? cacheKeys[lang] : 'en'; // Key to identify the cached response
   const cacheExpiration = config.cacheExpiration; // 4 hours in milliseconds
 
   try {
@@ -25,11 +40,11 @@ export default async function handler(req, res) {
     const cachedData = await CacheNewsHomepag.findOne({ cacheKey });
     if (cachedData && Date.now() - cachedData.timestamp < cacheExpiration) {
       console.log('Returning cached response');
-      return res.json({data : cachedData.data});
+      return res.json({ data: cachedData.data });
     }
     console.log("New Request Send");
 
-    const response = await getHomepageNews()
+    const response = await homepageNews[lang];
 
     // Update or create the cache with the new response
     await CacheNewsHomepag.updateOne(
@@ -47,8 +62,7 @@ export default async function handler(req, res) {
   }
 }
 
-
-async function getHomepageNewsHindi() {
+async function getHomepageNewsEn() {
   const apiRes = await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${config.newsAPIKey}&pageSize=30`, {
     headers: {
       'Content-Type': 'application/json',
@@ -67,8 +81,8 @@ async function getHomepageNewsHindi() {
       url: news.url,
       urlToImage: news.urlToImage,
       video: false,
-      time: (news?.publishedAt?(new Date(news?.publishedAt)).toLocaleDateString():''),
-      sourceLink:news.url,
+      time: (news?.publishedAt ? (new Date(news?.publishedAt)).toLocaleDateString() : ''),
+      sourceLink: news.url,
       logo: news.urlToImage
     }
   });
@@ -76,7 +90,30 @@ async function getHomepageNewsHindi() {
   return data
 }
 
-async function getHomepageNews() {
+async function getHomepageNewsHi() {
+
+  const apiResJson = await parse('https://www.abplive.com/home/feed');
+
+  const data = (apiResJson?.items || []).map((news, i) => {
+    return {
+      key: i + 1,
+      author: news.author,
+      title: news?.title,
+      description: news.description,
+      content: news.description,
+      url: news.link,
+      urlToImage: news.media.thumbnail?.url,
+      video: false,
+      time: (news?.publishedAt ? (new Date(news?.publishedAt)).toLocaleDateString() : ''),
+      sourceLink: news?.link,
+      logo: news.media.thumbnail?.url
+    }
+  });
+
+  return data
+}
+
+async function getHomepageNewsMr() {
   const apiRes = await fetch(`https://gnews.io/api/v4/search?q=example&apikey=20f8b9a1bfbb46ef961e11cec6367fd7&lang=hi`, {
     headers: {
       'Content-Type': 'application/json',
@@ -95,11 +132,12 @@ async function getHomepageNews() {
       url: news.url,
       urlToImage: news.image,
       video: false,
-      time: (news?.publishedAt?(new Date(news?.publishedAt)).toLocaleDateString():''),
-      sourceLink:news?.source?.url,
+      time: (news?.publishedAt ? (new Date(news?.publishedAt)).toLocaleDateString() : ''),
+      sourceLink: news?.source?.url,
       logo: news.image
     }
   });
 
   return data
 }
+
