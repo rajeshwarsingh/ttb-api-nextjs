@@ -31,7 +31,7 @@ connectDB();
 // Handler for the /api/news route
 export default async function handler(req, res) {
 
-  const { lang = 'hi' } = req.query;
+  const { lang = 'en' } = req.query;
   const cacheKey = cacheKeys[lang] ? cacheKeys[lang] : 'en'; // Key to identify the cached response
   const cacheExpiration = config.cacheExpiration; // 4 hours in milliseconds
 
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
 }
 
 async function getHomepageNewsEn() {
-  const apiRes = await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${config.newsAPIKey}&pageSize=30`, {
+  const apiRes = await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${config.newsAPIKey}&pageSize=100&country=in`, {
     headers: {
       'Content-Type': 'application/json',
     },

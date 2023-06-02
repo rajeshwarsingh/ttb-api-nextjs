@@ -49,7 +49,7 @@ export default async function handler(req, res) {
 
 
 async function getHomepageNews() {
-  const apiRes = await fetch(`https://newsapi.org/v2/top-headlines?category=business&apiKey=${config.newsAPIKey}&pageSize=30`, {
+  const apiRes = await fetch(`https://newsapi.org/v2/top-headlines?category=business&apiKey=${config.newsAPIKey}&pageSize=30pageSize=5&country=in`, {
     headers: {
       'Content-Type': 'application/json',
     },
