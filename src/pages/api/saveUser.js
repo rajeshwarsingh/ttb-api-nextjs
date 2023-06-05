@@ -1,5 +1,5 @@
-import { connectDB } from '../../db';
-const UserModel = require('../../models/user'); // Replace with your token model schema
+import { connectDB } from '../../db'; 
+const UserModel = require('../../models/user'); // Replace with your token model schemaa
 
 const handler = async (req, res) => {
   if (req.method === 'POST') {
